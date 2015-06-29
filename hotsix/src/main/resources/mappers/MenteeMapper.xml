@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  
+  
+ <mapper namespace="org.hotsix.mapper.MenteeMapper">
+ <sql id="searchSQL">
+    <if test="searchType != null">
+  	<if test="searchType eq 'id'.toString()">
+  	and tbl_member.id like CONCAT('%',#{keyword},'%')
+  	</if>
+  	<if test="searchType eq 'nickname'.toString()">
+  	and tbl_member.nickname like CONCAT('%',#{keyword},'%')
+  	</if>
+  	<if test="searchType eq 'name'.toString()">
+  	and tbl_member.name like CONCAT('%',#{keyword},'%')
+  	</if>
+  	
+  	<if test="searchType eq 'mentoid'.toString()">
+  	and tbl_member.mentoid like CONCAT('%',#{keyword},'%')
+  	</if>
+  	<if test="searchType eq 'edu_level'.toString()">
+  	and tbl_mentee.edu_level like CONCAT('%',#{keyword},'%')
+  	</if>
+  </if>  
+  </sql>
+ 
+  
+  
+ <select id="menteeCri" resultType="Member">
+ 
+  select id,nickname,name, 
+  (select (select id from tbl_member where tbl_member.memberNo=tbl_mento.memberNo)	
+  from tbl_mento where tbl_mento.mentoNo=tbl_mentee.mentoNo) as mentoid ,
+  regdate,logdate, edu_level from tbl_member, tbl_mentee 
+  where tbl_mentee.memberNo=tbl_member.memberNo group by tbl_member.id 
+  <include refid="searchSQL"/> 
+  order by tbl_member.regdate desc limit #{pageStart},#{perPageNum}
+ </select>
+ 
+ <select id="totalCount" resultType="MenteePageMaker">
+ select count(menteeNo) totalCount from tbl_mentee where menteeNo >0 
+ <include refid="searchSQL"/>
+  </select> 
+ </mapper>
