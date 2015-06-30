@@ -22,7 +22,7 @@ public class MapperTest {
 	public void timeTest() throws Exception{
 		System.out.println(jmapper.whatTime());
 	}
-	
+	logger.info("dddd");
 	@Test
 	public void jobListTest(){
 			logger.info(jmapper.jobList(null).toString());
